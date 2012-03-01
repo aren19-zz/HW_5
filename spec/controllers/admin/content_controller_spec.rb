@@ -2,6 +2,18 @@ require 'spec_helper'
 
 describe Admin::ContentController do
   render_views
+  
+    describe 'admin merging articles' do
+    it 'should render the admin_content view'
+    it 'should call the controller merge method'
+    it 'should call the model method for merging'
+  end
+  
+  describe 'non-admin merging articles' do
+    it 'should render the admin_content view'
+    it 'should call the controller merge method'
+    it 'should call the model method for merging'
+  end
 
   # Like it's a shared, need call everywhere
   shared_examples_for 'index action' do
