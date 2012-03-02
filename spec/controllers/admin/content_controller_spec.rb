@@ -7,7 +7,6 @@ describe Admin::ContentController do
     before :each do
       @a1 = Factory(:article, :state => 'draft')
       @a2 = Factory(:article, :state => 'draft')
-      @a3 = Factory(:article, :state => 'draft')
       Factory(:blog)
       @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
       request.session = { :user => @user.id }
@@ -22,7 +21,7 @@ describe Admin::ContentController do
       put :merge_articles, {:id1 => "1", :id2 => "2"}
     end
     it 'should render the new admin_content view' do
-      @a1.stub!(:merge_with).with(@a2.id).and_return(@a3)
+      @a1.stub!(:merge_with).with(@a2.id)
       put :merge_articles, {:id1 => "1", :id2 => "2"}
       response.should render_template('/app/views/admin/content/_form.html.erb')
     end
@@ -30,11 +29,13 @@ describe Admin::ContentController do
   
   describe 'non-admin merging articles' do
   
-      before :each do
+    before :each do
       @a1 = Factory(:article, :state => 'draft')
       @a2 = Factory(:article, :state => 'draft')
-      @a3 = Factory(:article, :state => 'draft')
       #create non-admin user
+      Factory(:blog)
+      @user = Factory(:user)
+      request.session = { :user => @user.id }
     end
     
     it 'should not call the model method for merging' do
@@ -45,11 +46,28 @@ describe Admin::ContentController do
       @a1.should_not_receive(:merge_with).with(@a2.id)
       put :merge_articles, {:id1 => "1", :id2 => "2"}
     end
-    it 'should not render the new admin_content view' do
-    @a1.stub!(:merge_with).with(@a2.id).and_return(@a3)
+    it 'should render an error view' do
+    @a1.stub!(:merge_with).with(@a2.id)
       put :merge_articles, {:id1 => "1", :id2 => "2"}
-      response.should_not render_template('/app/views/admin/content/_form.html.erb')
+      response.should render_template('some error page')
     end
+  end
+  
+  describe 'articles merged correctly' do
+    
+    before :each do
+      @a1 = Factory(:article, :state => 'draft', :body => "kitty")
+      @a2 = Factory(:article, :state => 'draft', :body => "puppy")
+      Factory(:blog)
+      @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
+      request.session = { :user => @user.id }
+    end
+    
+    it 'should show the contents of both articles in the merged one' do
+      put :merge_articles, {:id1 => "1", :id2 => "2"}
+      assigns(@a1.body).should == "kittypuppy" 
+    end
+  
   end
 
   # Like it's a shared, need call everywhere
