@@ -14,7 +14,16 @@ class Article < Content
   validates_uniqueness_of :guid
   validates_presence_of :title
 
-  belongs_to :user
+  has_and_belongs_to_many :users
+
+  def user
+    users.first
+  end
+
+  def user= u
+    users.destroy_all
+    users << u
+  end
 
   has_many :pings,      :dependent => :destroy, :order => "created_at ASC"
   has_many :trackbacks, :dependent => :destroy, :order => "created_at ASC"
