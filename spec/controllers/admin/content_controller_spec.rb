@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Admin::ContentController do
   render_views
-  
+
     describe 'admin merging articles' do 
     before :each do
       @a1 = Factory(:article, :state => 'draft')
@@ -12,7 +12,7 @@ describe Admin::ContentController do
       @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
       request.session = { :user => @user.id }
     end
-    
+
     it 'should call the controller merge method' do
       should_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
       put :merge_articles, {:id1 => "1", :id2 => "2"}
@@ -27,16 +27,16 @@ describe Admin::ContentController do
       response.should render_template('/app/views/admin/content/_form.html.erb')
     end
   end
-  
+
   describe 'non-admin merging articles' do
-  
+
       before :each do
       @a1 = Factory(:article, :state => 'draft')
       @a2 = Factory(:article, :state => 'draft')
       @a3 = Factory(:article, :state => 'draft')
       #create non-admin user
     end
-    
+
     it 'should not call the model method for merging' do
       should_not_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
       put :merge_articles, {:id1 => "1", :id2 => "2"}
