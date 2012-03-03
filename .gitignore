@@ -1,13 +1,14 @@
 config/mail.yml
 *.log
 *~
+\#*\#
 db/*.sqlite*
 db/schema.rb
 db/db_development
 db/db_test
-.*.swp
-.*.swo
+.*.sw[a-z]
 .DS_Store
+doc/*.svg
 .rspec
 installer/rails_installer.yml
 #/public/files
