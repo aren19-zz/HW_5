@@ -25,6 +25,19 @@ describe Article do
     a = Article.new
     assert_equal [:body, :extended], a.content_fields
   end
+  
+  describe 'merge method' do
+  
+    before :each do
+      @a1 = Factory(:article, :state => 'draft')
+      @a2 = Factory(:article, :state => 'draft')
+    end
+    
+    it 'should call the Model instance method merge_with' do
+      @a1.should_receive(:merge_with).with(@a2.id)
+      @a1.merge_with(@a2.id)
+    end
+  end
 
   describe "#permalink_url" do
     describe "with hostname" do

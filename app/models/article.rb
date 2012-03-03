@@ -468,4 +468,11 @@ class Article < Content
     to = to - 1 # pull off 1 second so we don't overlap onto the next day
     return from..to
   end
+  
+  def merge_with (other_id)
+    article2 = Article.find(other_id)
+    new_text = self.body + article2.body
+    self.update_attributes!(:body => new_text)
+    Article.delete(other_id)
+  end
 end
