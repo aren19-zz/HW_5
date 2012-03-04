@@ -60,7 +60,7 @@ class Admin::FeedbackController < Admin::BaseController
   def destroy
     @record = Feedback.find params[:id]
 
-    unless @record.article.user_id == current_user.id
+    unless @record.article.user.id == current_user.id
       unless current_user.admin?
         return redirect_to :controller => 'admin/feedback', :action => :index
       end
