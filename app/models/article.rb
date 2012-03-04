@@ -422,7 +422,7 @@ class Article < Content
   end
 
   def access_by?(u)
-    u.admin? || user.id == u.id
+    u.admin? || users.exists?(u)
   end
 
   protected
