@@ -261,9 +261,9 @@ class Admin::ContentController < Admin::BaseController
 
   def merge_articles
     if current_user.admin?
-      article = Article.find params[:id1] #TODO is this safe if params id1 doesn't exist?
+      article = Article.find params[:id] #TODO is this safe if params id doesn't exist?
 
-      unless article.merge_with! params[:id2]
+      unless article.merge_with! params[:other_id] #TODO you may have to change this based on what you set up in the view/form
         flash[:error] = "Unable to merge articles. Did you enter the correct article id?"
       end
     else
