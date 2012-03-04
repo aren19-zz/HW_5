@@ -421,8 +421,8 @@ class Article < Content
     self.categorizations.build(:category => category, :is_primary => is_primary)
   end
 
-  def access_by?(user)
-    user.admin? || user_id == user.id
+  def access_by?(u)
+    u.admin? || user.id == u.id
   end
 
   protected
