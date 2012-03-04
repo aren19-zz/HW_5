@@ -25,17 +25,54 @@ describe Article do
     a = Article.new
     assert_equal [:body, :extended], a.content_fields
   end
-  
+
   describe 'merge method' do
-  
+
     before :each do
       @a1 = Factory(:article, :state => 'draft')
       @a2 = Factory(:article, :state => 'draft')
     end
-    
-    it 'should call the Model instance method merge_with' do
-      @a1.should_receive(:merge_with).with(@a2.id)
-      @a1.merge_with(@a2.id)
+
+    it 'should call the Model instance method merge_with!' do
+      @a1.should_receive(:merge_with!).with(@a2.id)
+      @a1.merge_with!(@a2.id)
+    end
+
+    context 'other article does not exist' do
+
+      before :each do
+        #TODO set up only one article and check its behavior
+      end
+
+      it 'should not change the callee model' do
+        pending #check to make sure that nothing is received on the mock and Article doesn't get any calls either
+      end
+
+      it 'should return false' do
+        pending
+      end
+    end
+
+    context 'other article does exist' do
+      before :each do
+        #TODO any setup necessary?
+      end
+
+      it 'should contain the text of the other article' do
+        pending
+      end
+
+      it 'should concatenate the users of the merging article into its users' do
+        pending
+      end
+
+      it 'should delete the other article' do
+        pending
+      end
+
+      it 'should return true' do
+        pending
+      end
     end
   end
 
