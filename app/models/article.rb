@@ -21,7 +21,7 @@ class Article < Content
   end
 
   def user= u
-    users.destroy_all
+    users.clear
     users << u
   end
 
