@@ -258,4 +258,15 @@ class Admin::ContentController < Admin::BaseController
   def setup_resources
     @resources = Resource.by_created_at
   end
+  
+  def merge_articles
+    @admin = false
+    #check if admin
+    if (admin)
+      @article1 = Article.find params[:id1]
+      @article1.merge_with(params[:id2])
+    else
+      #redirect
+    end
+  end
 end

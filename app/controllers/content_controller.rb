@@ -34,14 +34,4 @@ class ContentController < ApplicationController
     this_blog.current_theme.layout(self.action_name)
   end
   
-  def merge_articles
-    @admin = false
-    #check if admin
-    if (admin)
-      @article1 = Article.find params[:id1]
-      @article1.merge_with(params[:id2])
-    else
-      #redirect
-    end
-  end
 end
