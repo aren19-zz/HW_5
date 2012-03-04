@@ -260,17 +260,16 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def merge_articles
-    unless current_user.admin?
-      #TODO where to redirect
+    if current_user.admin?
+      article = Article.find params[:id1] #TODO is this safe if params id1 doesn't exist?
+
+      unless article.merge_with! params[:id2]
+        flash[:error] = "Unable to merge articles. Did you enter the correct article id?"
+      end
+    else
+      flash[:error] = "Non-admin users are not allowed to merge articles"
     end
 
-    article1 = Article.find params[:id1] #TODO is this safe if params id1 doesn't exist?
-    resulting_article = article1.merge_with(params[:id2])
-
-    unless resulting_article
-      #merge failed. redirect to somewhere
-    end
-
-    #TODO redirect to edit page of new article
+    #TODO redirect to edit page of article
   end
 end
