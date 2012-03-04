@@ -3,71 +3,74 @@ require 'spec_helper'
 describe Admin::ContentController do
   render_views
 
-    describe 'admin merging articles' do 
-    before :each do
-      @a1 = Factory(:article, :state => 'draft')
-      @a2 = Factory(:article, :state => 'draft')
-      Factory(:blog)
-      @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
-      request.session = { :user => @user.id }
+  describe 'article merging' do
+    context 'merging articles as an administrator' do
+      before :each do
+        @a1 = Factory(:article, :state => 'draft')
+        @a2 = Factory(:article, :state => 'draft')
+        Factory(:blog)
+        @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
+        request.session = { :user => @user.id }
+      end
+
+      it 'should call the controller merge method' do
+        should_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+      end
+      it 'should call the model method for merging' do
+        @a1.should_receive(:merge_with).with(@a2.id)
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+      end
+      it 'should render the new admin_content view' do
+        @a1.stub!(:merge_with).with(@a2.id)
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        response.should render_template('/app/views/admin/content/_form.html.erb')
+      end
     end
 
-    it 'should call the controller merge method' do
-      should_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
-    end
-    it 'should call the model method for merging' do
-      @a1.should_receive(:merge_with).with(@a2.id)
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
-    end
-    it 'should render the new admin_content view' do
+    context 'merging articles a non-admin user' do
+      before :each do
+        @a1 = Factory(:article, :state => 'draft')
+        @a2 = Factory(:article, :state => 'draft')
+        #create non-admin user
+        Factory(:blog)
+        @user = Factory(:user)
+        request.session = { :user => @user.id }
+      end
+
+      it 'should not call the model method for merging' do
+        should_not_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+      end
+      it 'should not call the controller merge method' do
+        @a1.should_not_receive(:merge_with).with(@a2.id)
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+      end
+      it 'should render an error view' do
       @a1.stub!(:merge_with).with(@a2.id)
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
-      response.should render_template('/app/views/admin/content/_form.html.erb')
-    end
-  end
-
-  describe 'non-admin merging articles' do
-
-    before :each do
-      @a1 = Factory(:article, :state => 'draft')
-      @a2 = Factory(:article, :state => 'draft')
-      #create non-admin user
-      Factory(:blog)
-      @user = Factory(:user)
-      request.session = { :user => @user.id }
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        response.should render_template('some error page')
+      end
     end
 
-    it 'should not call the model method for merging' do
-      should_not_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
+    describe 'article merge semantics' do
+      before :each do
+        @a1 = Factory(:article, :state => 'draft', :body => "kitty")
+        @a2 = Factory(:article, :state => 'draft', :body => "puppy")
+        Factory(:blog)
+        @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
+        request.session = { :user => @user.id }
+      end
+
+      it 'should show the contents of both articles in the merged one' do
+        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        assigns(@a1.body).should == "kittypuppy" 
+      end
+
+      it 'shows the authors of both articles on the resulting merged article' do
+        pending
+      end
     end
-    it 'should not call the controller merge method' do
-      @a1.should_not_receive(:merge_with).with(@a2.id)
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
-    end
-    it 'should render an error view' do
-    @a1.stub!(:merge_with).with(@a2.id)
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
-      response.should render_template('some error page')
-    end
-  end
-  
-  describe 'articles merged correctly' do
-    
-    before :each do
-      @a1 = Factory(:article, :state => 'draft', :body => "kitty")
-      @a2 = Factory(:article, :state => 'draft', :body => "puppy")
-      Factory(:blog)
-      @user = Factory(:user, :profile => Factory(:profile_admin, :label => Profile::ADMIN))
-      request.session = { :user => @user.id }
-    end
-    
-    it 'should show the contents of both articles in the merged one' do
-      put :merge_articles, {:id1 => "1", :id2 => "2"}
-      assigns(@a1.body).should == "kittypuppy" 
-    end
-  
   end
 
   # Like it's a shared, need call everywhere
@@ -115,7 +118,7 @@ describe Admin::ContentController do
       response.should render_template('index')
       response.should be_success
     end
-    
+
     it 'should restrict to withdrawn articles' do
       article = Factory(:article, :state => 'withdrawn', :published_at => '2010-01-01')
       get :index, :search => {:state => 'withdrawn'}
@@ -123,7 +126,7 @@ describe Admin::ContentController do
       response.should render_template('index')
       response.should be_success
     end
-  
+
     it 'should restrict to withdrawn articles' do
       article = Factory(:article, :state => 'withdrawn', :published_at => '2010-01-01')
       get :index, :search => {:state => 'withdrawn'}
