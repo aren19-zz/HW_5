@@ -258,15 +258,19 @@ class Admin::ContentController < Admin::BaseController
   def setup_resources
     @resources = Resource.by_created_at
   end
-  
+
   def merge_articles
-    @admin = false
-    #check if admin
-    if (admin)
-      @article1 = Article.find params[:id1]
-      @article1.merge_with(params[:id2])
-    else
-      #redirect
+    unless current_user.admin?
+      #TODO where to redirect
     end
+
+    article1 = Article.find params[:id1] #TODO is this safe if params id1 doesn't exist?
+    resulting_article = article1.merge_with(params[:id2])
+
+    unless resulting_article
+      #merge failed. redirect to somewhere
+    end
+
+    #TODO redirect to edit page of new article
   end
 end
