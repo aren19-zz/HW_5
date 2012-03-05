@@ -17,12 +17,14 @@ describe Admin::ContentController do
         should_receive(:merge).with({:id1 => "1", :id2 => "2"})
         put :merge, {:id1 => "1", :id2 => "2"}
       end
+
       it 'should call the model method for merging' do
-        @a1.should_receive(:merge_with).with(@a2.id)
+        @a1.should_receive(:merge_with!).with(@a2.id)
         put :merge, {:id1 => "1", :id2 => "2"}
       end
+
       it 'should render the new admin_content view' do
-        @a1.stub!(:merge_with).with(@a2.id)
+        @a1.stub!(:merge_with!).with(@a2.id)
         put :merge, {:id1 => "1", :id2 => "2"}
         response.should render_template('/app/views/admin/content/_form.html.erb')
       end
@@ -42,12 +44,14 @@ describe Admin::ContentController do
         should_not_receive(:merge).with({:id1 => "1", :id2 => "2"})
         put :merge, {:id1 => "1", :id2 => "2"}
       end
+
       it 'should not call the controller merge method' do
-        @a1.should_not_receive(:merge_with).with(@a2.id)
+        @a1.should_not_receive(:merge_with!).with(@a2.id)
         put :merge, {:id1 => "1", :id2 => "2"}
       end
+
       it 'should render an error view' do
-      @a1.stub!(:merge_with).with(@a2.id)
+        @a1.stub!(:merge_with!).with(@a2.id)
         put :merge, {:id1 => "1", :id2 => "2"}
         response.should render_template('some error page')
       end
