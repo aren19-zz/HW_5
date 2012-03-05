@@ -117,14 +117,14 @@ class Admin::ContentController < Admin::BaseController
     if current_user.admin?
       article = Article.find params[:id] #TODO is this safe if params id doesn't exist?
 
-      unless article.merge_with! params[:other_id] #TODO you may have to change this based on what you set up in the view/form
+      unless article.merge_with! params[:other_id]
         flash[:error] = "Unable to merge articles. Did you enter the correct article id?"
       end
     else
       flash[:error] = "Non-admin users are not allowed to merge articles"
     end
 
-    #TODO redirect to edit page of article
+    redirect_to action: :edit, id: params[:id]
   end
 
   protected
