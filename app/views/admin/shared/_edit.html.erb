@@ -4,4 +4,8 @@
   <%= render :partial => "form" %>
 
 <% end %>
-<% #conditionally render merge form here if requested by super %>
+<% form_tag(form_action.merge({action: 'merge'}), method: 'post') do %>
+    <%= label_tag(:other_id, 'Merge with this article') %>
+    <%= text_field_tag(:other_id) %>
+    <%= submit_tag("Merge With This Article") %>
+<% end %>

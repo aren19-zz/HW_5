@@ -113,6 +113,20 @@ class Admin::ContentController < Admin::BaseController
     render :text => nil
   end
 
+  def merge
+    if current_user.admin?
+      article = Article.find params[:id] #TODO is this safe if params id doesn't exist?
+
+      unless article.merge_with! params[:other_id] #TODO you may have to change this based on what you set up in the view/form
+        flash[:error] = "Unable to merge articles. Did you enter the correct article id?"
+      end
+    else
+      flash[:error] = "Non-admin users are not allowed to merge articles"
+    end
+
+    #TODO redirect to edit page of article
+  end
+
   protected
 
   def get_fresh_or_existing_draft_for_article
@@ -257,19 +271,5 @@ class Admin::ContentController < Admin::BaseController
 
   def setup_resources
     @resources = Resource.by_created_at
-  end
-
-  def merge_articles
-    if current_user.admin?
-      article = Article.find params[:id] #TODO is this safe if params id doesn't exist?
-
-      unless article.merge_with! params[:other_id] #TODO you may have to change this based on what you set up in the view/form
-        flash[:error] = "Unable to merge articles. Did you enter the correct article id?"
-      end
-    else
-      flash[:error] = "Non-admin users are not allowed to merge articles"
-    end
-
-    #TODO redirect to edit page of article
   end
 end
