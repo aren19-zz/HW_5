@@ -4,8 +4,10 @@
   <%= render :partial => "form" %>
 
 <% end %>
-<%= form_tag(form_action.merge({action: 'merge'}), method: 'post') do %>
-    <%= label_tag(:other_id, 'Merge with this article') %>
-    <%= text_field_tag(:other_id) %>
-    <%= submit_tag("Merge With This Article") %>
+<% if @render_merge_form %>
+  <%= form_tag(form_action.merge({action: 'merge'}), method: 'post') do %>
+      <%= label_tag(:other_id, 'Merge with this article') %>
+      <%= text_field_tag(:other_id) %>
+      <%= submit_tag("Merge With This Article") %>
+  <% end %>
 <% end %>
