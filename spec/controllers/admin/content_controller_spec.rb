@@ -14,16 +14,16 @@ describe Admin::ContentController do
       end
 
       it 'should call the controller merge method' do
-        should_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        should_receive(:merge).with({:id1 => "1", :id2 => "2"})
+        put :merge, {:id1 => "1", :id2 => "2"}
       end
       it 'should call the model method for merging' do
         @a1.should_receive(:merge_with).with(@a2.id)
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        put :merge, {:id1 => "1", :id2 => "2"}
       end
       it 'should render the new admin_content view' do
         @a1.stub!(:merge_with).with(@a2.id)
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        put :merge, {:id1 => "1", :id2 => "2"}
         response.should render_template('/app/views/admin/content/_form.html.erb')
       end
     end
@@ -39,16 +39,16 @@ describe Admin::ContentController do
       end
 
       it 'should not call the model method for merging' do
-        should_not_receive(:merge_articles).with({:id1 => "1", :id2 => "2"})
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        should_not_receive(:merge).with({:id1 => "1", :id2 => "2"})
+        put :merge, {:id1 => "1", :id2 => "2"}
       end
       it 'should not call the controller merge method' do
         @a1.should_not_receive(:merge_with).with(@a2.id)
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        put :merge, {:id1 => "1", :id2 => "2"}
       end
       it 'should render an error view' do
       @a1.stub!(:merge_with).with(@a2.id)
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        put :merge, {:id1 => "1", :id2 => "2"}
         response.should render_template('some error page')
       end
     end
@@ -63,7 +63,7 @@ describe Admin::ContentController do
       end
 
       it 'should show the contents of both articles in the merged one' do
-        put :merge_articles, {:id1 => "1", :id2 => "2"}
+        put :merge, {:id1 => "1", :id2 => "2"}
         assigns(@a1.body).should == "kittypuppy" 
       end
 
