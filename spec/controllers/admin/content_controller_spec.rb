@@ -14,18 +14,18 @@ describe Admin::ContentController do
       end
 
       it 'should call the controller merge method' do
-        should_receive(:merge).with({:id => "1", :other_id => "2"})
-        put :merge, {:id => "1", :other_id => "2"}
+        should_receive(:merge).with({:id => @a1.id, :other_id => @a2.id})
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
       end
 
       it 'should call the model method for merging' do
         @a1.should_receive(:merge_with!).with(@a2.id)
-        put :merge, {:id => "1", :other_id => "2"}
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
       end
 
       it 'should render the new admin_content view' do
         @a1.stub!(:merge_with!).with(@a2.id)
-        put :merge, {:id => "1", :other_id => "2"}
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
         response.should render_template('/app/views/admin/content/_form.html.erb')
       end
     end
@@ -41,19 +41,18 @@ describe Admin::ContentController do
       end
 
       it 'should not call the model method for merging' do
-        should_not_receive(:merge).with({:id => "1", :other_id => "2"})
-        put :merge, {:id => "1", :other_id => "2"}
+        should_not_receive(:merge).with({:id => @a1.id, :other_id => @a2.id})
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
       end
 
       it 'should not call the controller merge method' do
         @a1.should_not_receive(:merge_with!).with(@a2.id)
-        put :merge, {:id => "1", :other_id => "2"}
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
       end
 
       it 'should render an error view' do
-        @a1.stub!(:merge_with!).with(@a2.id)
-        put :merge, {:id => "1", :other_id => "2"}
-        response.should render_template('some error page')
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
+        flash[:error].should == "Non-admin users are not allowed to merge articles"
       end
     end
 
@@ -67,7 +66,7 @@ describe Admin::ContentController do
       end
 
       it 'should show the contents of both articles in the merged one' do
-        put :merge, {:id => "1", :other_id => "2"}
+        put :merge, {:id => @a1.id, :other_id => @a2.id}
         assigns(@a1.body).should == "kittypuppy" 
       end
 
