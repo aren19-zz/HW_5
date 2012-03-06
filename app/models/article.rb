@@ -425,6 +425,13 @@ class Article < Content
     u.admin? || users.exists?(u)
   end
 
+  def merge_with!(other_id)
+    other_article = Article.find_by_id other_id
+    update_attributes!(:body => body+other_article.body)
+    #TODO merge users << other_article.users
+    Article.delete(other_id)#TODO destroy the habtm relationship for the old article
+  end
+
   protected
 
   def set_published_at
@@ -467,12 +474,5 @@ class Article < Content
     to = from + 1.day unless day.blank?
     to = to - 1 # pull off 1 second so we don't overlap onto the next day
     return from..to
-  end
-
-  def merge_with!(other_id)
-    other_article = Article.find_by_id other_id
-    update_attributes!(:body => body+other_article.body)
-    #TODO merge users << other_article.users
-    Article.delete(other_id)#TODO destroy the habtm relationship for the old article
   end
 end
