@@ -114,10 +114,13 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def merge
+    sendto_id = params[:id]
     if current_user.admin?
-      article = Article.find params[:id] #TODO is this safe if params id doesn't exist?
+      article = Article.find params[:id] #TODO is it safe to assume this article always exists?
 
-      unless article.merge_with! params[:other_id]
+      if (a = article.merge_with! params[:other_id])
+        sendto_id = a.id
+      else
         flash[:error] = "Unable to merge articles. Did you enter the correct article id?"
       end
     else

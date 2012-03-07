@@ -417,7 +417,8 @@ class Article < Content
   end
 
   def merge_with!(other_id)
-    other_article = Article.find other_id #this covers the exceptional failure mode we want
+    other_article = Article.find_by_id other_id
+    return nil unless other_article
     update_attributes!(body: body+other_article.body)
     comments << other_article.comments
     other_article.destroy
