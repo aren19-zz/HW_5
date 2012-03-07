@@ -62,10 +62,6 @@ describe Article do
         pending
       end
 
-      it 'should concatenate the users of the merging article into its users' do
-        pending
-      end
-
       it 'should delete the other article' do
         pending
       end

@@ -117,7 +117,6 @@ class Admin::ContentController < Admin::BaseController
     sendto_id = params[:id]
     if current_user.admin?
       article = Article.find params[:id] #TODO is it safe to assume this article always exists?
-
       if (a = article.merge_with! params[:other_id])
         sendto_id = a.id
       else
