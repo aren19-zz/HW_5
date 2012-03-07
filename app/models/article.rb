@@ -14,16 +14,7 @@ class Article < Content
   validates_uniqueness_of :guid
   validates_presence_of :title
 
-  has_and_belongs_to_many :users
-
-  def user
-    users.first
-  end
-
-  def user= u
-    users.clear
-    users << u
-  end
+  belongs_to :user
 
   has_many :pings,      :dependent => :destroy, :order => "created_at ASC"
   has_many :trackbacks, :dependent => :destroy, :order => "created_at ASC"
@@ -421,8 +412,8 @@ class Article < Content
     self.categorizations.build(:category => category, :is_primary => is_primary)
   end
 
-  def access_by?(u)
-    u.admin? || users.exists?(u)
+  def access_by?(user)
+    user.admin? || user_id == user.id
   end
 
   def merge_with!(other_id)
