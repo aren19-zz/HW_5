@@ -419,8 +419,7 @@ class Article < Content
   def merge_with!(other_id)
     other_article = Article.find_by_id other_id
     update_attributes!(:body => body+other_article.body)
-    #TODO merge users << other_article.users
-    Article.delete(other_id)#TODO destroy the habtm relationship for the old article
+    Article.delete(other_id)
   end
 
   protected
