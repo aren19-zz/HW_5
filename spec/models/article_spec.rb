@@ -46,14 +46,15 @@ describe Article do
 
     context 'other article does exist' do
       before :each do
-        @a1 = Factory(:article, :state => 'draft', body: 'a1 body: kitties')
-        @a2 = Factory(:article, :state => 'draft', body: 'a2 body: puppies')
+        @a1 = Factory(:article, :state => 'draft', body: 'kitties')
+        @a2 = Factory(:article, :state => 'draft', body: 'puppies')
         Article.stub(:find_by_id).and_return @a2
         Article.stub(:delete)
       end
 
       it 'should contain the text of the other article' do
-        pending
+        @a1.merge_with!(@a2.id)
+        @a1.body.should == 'kittiespuppies'
       end
 
       it 'should delete the other article' do
