@@ -93,11 +93,10 @@ def stub_full_article(time=Time.now)
   author = stub_model(User, :name => "User Name")
   text_filter = Factory.build(:textile)
 
-  a = stub_model(Article, :published_at => time,
+  a = stub_model(Article, :published_at => time, :user => author,
                  :created_at => time, :updated_at => time,
                  :title => "Foo Bar", :permalink => 'foo-bar',
                  :guid => time.hash)
-  a.stub(:users) { [author] }
   a.stub(:categories) { [Factory.build(:category)] }
   a.stub(:published_comments) { [] }
   a.stub(:resources) { [Factory.build(:resource)] }

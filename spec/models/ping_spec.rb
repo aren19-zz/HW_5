@@ -34,6 +34,11 @@ describe 'Given a post which references a pingback enabled article' do
 
     Factory(:blog, :send_outbound_pings => 1)
 
+    a = Article.new \
+      :body => '<a href="http://anotherblog.org/a-post">',
+      :title => 'Test the pinging',
+      :published => true
+
     Net::HTTP.should_receive(:get_response).and_return(@mock_response)
     XMLRPC::Client.should_receive(:new2).with(pingback_target).and_return(@mock_xmlrpc_response)
 
@@ -43,10 +48,6 @@ describe 'Given a post which references a pingback enabled article' do
             %r{http://myblog.net/\d{4}/\d{2}/\d{2}/test-the-pinging},
             referenced_url)
 
-    a = Article.new \
-      :body => '<a href="http://anotherblog.org/a-post">',
-      :title => 'Test the pinging',
-      :published => true
 
     a.should have(1).html_urls
     a.save!
