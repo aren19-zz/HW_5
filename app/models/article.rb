@@ -421,7 +421,7 @@ class Article < Content
     return nil unless other_article
     update_attributes!(body: body+other_article.body)
     comments << other_article.comments
-    other_article.destroy
+    Article.delete other_article
     self
   end
 
