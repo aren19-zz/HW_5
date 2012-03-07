@@ -27,35 +27,29 @@ describe Article do
   end
 
   describe 'merge method' do
-
-    before :each do
-      @a1 = Factory(:article, :state => 'draft')
-      @a2 = Factory(:article, :state => 'draft')
-    end
-
-    it 'should call the Model instance method merge_with!' do
-      @a1.should_receive(:merge_with!).with(@a2.id)
-      @a1.merge_with!(@a2.id)
-    end
-
     context 'other article does not exist' do
-
       before :each do
         #TODO set up only one article and check its behavior
+        @a1 = Factory(:article, :state => 'draft', body: 'a1 body: kitties')
+        Article.stub(:find_by_id).and_return nil
       end
 
       it 'should not change the callee model' do
         pending #check to make sure that nothing is received on the mock and Article doesn't get any calls either
+        #TODO neither of the bodies should change
       end
 
-      it 'should return false' do
-        pending
+      it 'should return nil' do
+        @a1.merge_with!(338484848).should be_nil
       end
     end
 
     context 'other article does exist' do
       before :each do
-        #TODO any setup necessary?
+        @a1 = Factory(:article, :state => 'draft', body: 'a1 body: kitties')
+        @a2 = Factory(:article, :state => 'draft', body: 'a2 body: puppies')
+        Article.stub(:find_by_id).and_return @a2
+        Article.stub(:delete)
       end
 
       it 'should contain the text of the other article' do
@@ -63,11 +57,12 @@ describe Article do
       end
 
       it 'should delete the other article' do
-        pending
+        Article.should_receive(:delete).with @a2
+        @a1.merge_with! @a2.id
       end
 
-      it 'should return true' do
-        pending
+      it 'should return the receiving article' do
+        @a1.merge_with!(@a2.id).should_not be_nil
       end
     end
   end
