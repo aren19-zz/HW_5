@@ -29,7 +29,6 @@ describe Article do
   describe 'merge method' do
     context 'other article does not exist' do
       before :each do
-        #TODO set up only one article and check its behavior
         @a1 = Factory(:article, :state => 'draft', body: 'a1 body: kitties')
         Article.stub(:find_by_id).and_return nil
       end
@@ -56,14 +55,10 @@ describe Article do
         @a1.merge_with!(@a2.id)
         @a1.body.should == 'kittiespuppies'
       end
-      
+
       it 'should contain only one author' do
         @a1.merge_with!(@a2.id)
         @a1.author.should == "sam"
-      end
-      
-      it 'should contain comments from both articles' do
-        pending
       end
 
       it 'should delete the other article' do
@@ -73,6 +68,16 @@ describe Article do
 
       it 'should return the receiving article' do
         @a1.merge_with!(@a2.id).should_not be_nil
+      end
+
+      it 'should concatenate the comments of the merging article' do
+        a2_comments = (1..5).map { Factory(:comment, article: @a2) }
+        @a2.stub(:comments).and_return a2_comments
+
+        a1_comments = mock()
+        a1_comments.should_receive(:<<).with a2_comments
+        @a1.stub(:comments).and_return a1_comments
+        @a1.merge_with!(@a2.id)
       end
     end
   end
