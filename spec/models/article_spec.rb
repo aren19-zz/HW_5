@@ -34,8 +34,8 @@ describe Article do
       end
 
       it 'should not change the callee model' do
-        pending #check to make sure that nothing is received on the mock and Article doesn't get any calls either
-        #TODO neither of the bodies should change
+        @a1.should_receive(:update_attributes!).exactly(0).times
+        @a1.merge_with!(8383848583)
       end
 
       it 'should return nil' do
