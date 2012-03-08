@@ -18,6 +18,13 @@ describe Admin::ContentController do
         Article.stub!(:find).with(@a1.id).and_return(@a1)
         put :merge, {:id => @a1.id, :other_id => @a2.id}
       end
+      
+      it 'should render the edit partial' do
+        Article.stub!(:find).with(@a1.id).and_return(@a1)
+        Article.stub!(:access_by).and_return(true)
+        put :edit, {:id => @a1.id}
+        response.body.should include("Merge with this article")
+      end
 
       it 'should render the new admin_content view' do
         Article.stub!(:find).with(@a1.id).and_return(@a1)
@@ -40,6 +47,13 @@ describe Admin::ContentController do
         @a1.should_not_receive(:merge_with!).with(@a2.id)
         Article.stub!(:find).with(@a1.id).and_return(@a1)
         put :merge, {:id => @a1.id, :other_id => @a2.id}
+      end
+      
+      it 'should render the edit partial' do
+        Article.stub!(:find).with(@a1.id).and_return(@a1)
+        Article.stub!(:access_by).and_return(false)
+        put :edit, {:id => @a1.id}
+        response.body.should_not include("Merge with this article")
       end
 
 #FIXME test is messed up: before conditions making this action try to redirect to login profile
