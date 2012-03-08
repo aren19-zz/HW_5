@@ -125,7 +125,7 @@ class Admin::ContentController < Admin::BaseController
       end
     else
       flash[:error] = "Non-admin users are not allowed to merge articles"
-      redirect_to :action => 'index'
+      return redirect_to :action => 'index'
     end
     redirect_to action: :edit, id: params[:id]
   end
