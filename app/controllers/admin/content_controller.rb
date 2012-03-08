@@ -34,6 +34,7 @@ class Admin::ContentController < Admin::BaseController
       flash[:error] = _("Error, you are not allowed to perform this action")
       return
     end
+    @render_merge_form = current_user.admin?
     new_or_edit
   end
 
@@ -201,7 +202,6 @@ class Admin::ContentController < Admin::BaseController
     @images = Resource.images_by_created_at.page(params[:page]).per(10)
     @resources = Resource.without_images_by_filename
     @macros = TextFilter.macro_filters
-    @render_merge_form = current_user.admin?
     render 'new'
   end
 
