@@ -29,7 +29,7 @@ describe Admin::ContentController do
       it 'should render the new admin_content view' do
         Article.stub!(:find).with(@a1.id).and_return(@a1)
         put :merge, {:id => @a1.id, :other_id => @a2.id}
-        response.should redirect_to("/admin/content/edit/#{@a1.id}")#TODO how to not hardcode this?
+        response.should redirect_to(:action => "edit", :id => @a1.id)
       end
     end
 
@@ -56,12 +56,15 @@ describe Admin::ContentController do
         response.body.should_not include("Merge with this article")
       end
 
-#FIXME test is messed up: before conditions making this action try to redirect to login profile
-      it 'should render an error view' do
+#michael said it should redirect to login profile since you are not an admin
+      it 'should render an error message' do
         Article.stub!(:find).with(@a1.id).and_return(@a1)
         put :merge, {:id => @a1.id, :other_id => @a2.id}
-        response.should redirect_to("/admin/content/edit/#{@a1.id}")#TODO how to not hardcode this?
-        flash[:error].should_not be_nil
+        #response.should redirect_to("/accounts/login")
+        response.should redirect_to :controller => "/accounts", :action => "login"
+        #michael says your hashes are ugly cause they're not ruby hashes.
+        #flash[:error].should_not be_nil
+        response.body.should_not include("Error, you are not allowed to perform this action")
       end
     end
 
