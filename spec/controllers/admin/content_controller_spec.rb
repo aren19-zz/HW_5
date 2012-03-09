@@ -49,7 +49,7 @@ describe Admin::ContentController do
         put :merge, {:id => @a1.id, :other_id => @a2.id}
       end
       
-      it 'should render the edit partial' do
+      it 'should not render the edit partial' do
         Article.stub!(:find).with(@a1.id).and_return(@a1)
         Article.stub!(:access_by).and_return(false)
         put :edit, {:id => @a1.id}
@@ -57,14 +57,12 @@ describe Admin::ContentController do
       end
 
 #michael said it should redirect to login profile since you are not an admin
-      it 'should render an error message' do
+      it 'should redirect to the login page' do
         Article.stub!(:find).with(@a1.id).and_return(@a1)
         put :merge, {:id => @a1.id, :other_id => @a2.id}
         #response.should redirect_to("/accounts/login")
         response.should redirect_to :controller => "/accounts", :action => "login"
         #michael says your hashes are ugly cause they're not ruby hashes.
-        #flash[:error].should_not be_nil
-        response.body.should_not include("Error, you are not allowed to perform this action")
       end
     end
 
